@@ -2,6 +2,7 @@ package org.example
 
 
 import org.example.ConsoleSystem.userMenuMenu
+import org.example.UtilidadesBiblioteca.Companion.generarIdentificadorUnico
 
 object MenuUsuario {
 
@@ -19,7 +20,7 @@ object MenuUsuario {
             userMenuMenu()
             val option = readln().toIntOrNull()
             when (option) {
-                1 -> crearLibro()
+                1 -> crearLibro(gestorBiblioteca)
                 2 -> {
                     val libro = gestorBiblioteca.obtenerId()
                     gestorBiblioteca.eliminarLibro(libro)
@@ -40,10 +41,9 @@ object MenuUsuario {
     /**
      * Función interna para crear un nuevo libro ingresando los detalles por consola.
      */
-    private fun crearLibro() {
+    private fun crearLibro(gestorBiblioteca: GestorBiblioteca) {
         ConsoleSystem.escritor("Ingrese los detalles del libro: ")
-        ConsoleSystem.escritor("Id: ")
-        val id = ConsoleSystem.lector().toInt()
+        val id = generarIdentificadorUnico()
 
         ConsoleSystem.escritor("Título: ")
         val titulo = ConsoleSystem.lector()
