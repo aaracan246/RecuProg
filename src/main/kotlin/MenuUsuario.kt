@@ -10,7 +10,7 @@ object MenuUsuario {
      * Función que muestra el menú de usuario y gestiona las opciones seleccionadas por el usuario.
      * @param gestorBiblioteca El gestor de biblioteca utilizado para realizar operaciones de gestión de libros.
      */
-    fun userMenu(usuario: Usuario, gestorBiblioteca: GestorBiblioteca, registroPrestamos: RegistroPrestamos) {
+    fun userMenu(usuario: Usuario, gestorBiblioteca: GestorElementos<ElementoBiblioteca>, registroPrestamos: RegistroPrestamos) {
         do {
             userMenuMenu()
             val option = readln().toIntOrNull()
@@ -37,6 +37,11 @@ object MenuUsuario {
 
                 7 -> {val user = usuario.getId()
                     registroPrestamos.retornarHistorialUsuario(user)}
+
+                8 -> {ConsoleSystem.escritor("Por favor, introduzca el título de la obra.")
+                    val valorBusqueda = ConsoleSystem.lector()
+                    val criterioTitulo: (ElementoBiblioteca) -> Boolean = { elemento -> elemento.obtenerTitulo() == valorBusqueda}
+                    gestorBiblioteca.filtrarPorCriterio(criterioTitulo)}
             }
         } while (option != null)
     }
@@ -44,7 +49,7 @@ object MenuUsuario {
     /**
      * Función interna para crear un nuevo libro ingresando los detalles por consola.
      */
-    private fun crearLibro(gestorBiblioteca: GestorBiblioteca) {
+    private fun crearLibro(gestorBiblioteca: GestorElementos<ElementoBiblioteca>) {
         ConsoleSystem.escritor("Ingrese los detalles del libro: ")
         val id = generarIdentificadorUnico()
 

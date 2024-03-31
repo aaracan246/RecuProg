@@ -67,6 +67,7 @@ object ConsoleSystem : EnviarMsg, LeerMsg {
         println("5. Consultar estado libros")
         println("6. Consultar historial de préstamos")
         println("7. Consultar préstamos de un usuario")
+        println("8. Buscar por criterio")
         println("Por favor, seleccione la opción que desee: ")
     }
 }

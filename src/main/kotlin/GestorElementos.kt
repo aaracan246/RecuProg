@@ -2,11 +2,11 @@ package org.example
 
 import org.example.UtilidadesBiblioteca.Companion.generarIdentificadorUnico
 
-open class GestorBiblioteca(private val gestorPrestamos: IGestorPrestamos) {
+open class GestorElementos<T: ElementoBiblioteca>(private val gestorPrestamos: IGestorPrestamos) {
     /**
-     * Lista mutable que almacena el catálogo de libros.
+     * Lista mutable que almacena el catálogo de Elementos.
      */
-    private val catalogo: MutableList<ElementoBiblioteca> = mutableListOf()
+    private val catalogo: MutableList<T> = mutableListOf()
 
 
     /**
@@ -31,7 +31,7 @@ open class GestorBiblioteca(private val gestorPrestamos: IGestorPrestamos) {
      * Agrega un nuevo libro al catálogo, si no existe previamente.
      * @param elemento El libro a agregar al catálogo.
      */
-    fun agregarElemento(elemento: ElementoBiblioteca) {
+    fun agregarElemento(elemento: T) {
         val idUnico = generarIdentificadorUnico()
 
         retornarTodosLibros()
@@ -127,6 +127,19 @@ open class GestorBiblioteca(private val gestorPrestamos: IGestorPrestamos) {
     }
 
     /**
+     * Filtra los elementos del catálogo según un criterio dado.
+     *
+     * @param criterio La función que define el criterio de filtrado.
+     * @return La lista de elementos filtrada.
+     */
+    fun filtrarPorCriterio(criterio: (elemento: T) -> Boolean){                                     // <- No funciona
+        ConsoleSystem.escritor("Se han encontrado los siguientes resultados:")
+        catalogo.filter(criterio).forEach{
+            ConsoleSystem.escritor(it.obtenerTitulo())}
+    }
+
+
+    /**
      * Obtiene el ID del libro ingresado por el usuario.
      * @return El ID del libro.
      */
@@ -136,7 +149,7 @@ open class GestorBiblioteca(private val gestorPrestamos: IGestorPrestamos) {
         return idLibro
     }
 
-    fun getCatalogo(): MutableList<ElementoBiblioteca>{
+    fun getCatalogo(): MutableList<T>{
         return catalogo
     }
 }

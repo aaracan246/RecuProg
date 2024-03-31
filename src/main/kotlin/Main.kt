@@ -3,7 +3,7 @@ package org.example
 fun main() {
     // Se crea un gestor de biblioteca
     val registroPrestamos = RegistroPrestamos()
-    val gestorBiblioteca = GestorBiblioteca(registroPrestamos)
+    val gestorBiblioteca = GestorElementos<ElementoBiblioteca>(registroPrestamos)
 
     // Se crean algunos libros
     val libro1 = Libro(133, "City of Glass", "Paul Auster", 1992, "Detectivesca", Estado.DISPONIBLE)
