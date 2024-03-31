@@ -3,7 +3,7 @@ package org.example
 /**
  * Clase para gestionar los préstamos de libros.
  */
-open class RegistroPrestamos {
+open class RegistroPrestamos: IGestorPrestamos {
     /**
      * Mapa mutable que almacena los préstamos actuales. La clave es el ID del libro y el valor es el ID del usuario.
      */
@@ -20,11 +20,11 @@ open class RegistroPrestamos {
      * @param idUsuario El ID del usuario que está tomando en préstamo el libro.
      * @param catalogo La lista mutable del catálogo de libros.
      */
-    fun registrarPrestamo(idLibro: Int, idUsuario: Int, catalogo: MutableList<Libro>) {
-        val libro = catalogo.find { it.getId() == idLibro }
+    override fun registrarPrestamo(idLibro: Int, idUsuario: Int, catalogo: MutableList<ElementoBiblioteca>) {
+        val libro = catalogo.find { it.obtenerId() == idLibro }
 
-        if (libro != null && libro.getEstado() == Estado.DISPONIBLE) {
-            libro.setEstado(Estado.PRESTADO)
+        if (libro != null && libro.obtenerEstado() == Estado.DISPONIBLE) {
+            libro.prestar()
             prestamosActuales[idLibro] = idUsuario
             historialPrestamos.getOrPut(idLibro) { mutableListOf() }.add(idUsuario)
             ConsoleSystem.escritor("Préstamo registrado con éxito.")
@@ -39,11 +39,11 @@ open class RegistroPrestamos {
      * @param idLibro El ID del libro que se va a devolver.
      * @param catalogo La lista mutable del catálogo de libros.
      */
-    fun devolverLibro(idLibro: Int, catalogo: MutableList<Libro>) {
-        val libro = catalogo.find { it.getId() == idLibro }
+    override fun devolverLibro(idLibro: Int, catalogo: MutableList<ElementoBiblioteca>) {
+        val libro = catalogo.find { it.obtenerId() == idLibro }
 
-        if (libro != null && libro.getEstado() == Estado.PRESTADO) {
-            libro.setEstado(Estado.DISPONIBLE)
+        if (libro != null && libro.obtenerEstado() == Estado.PRESTADO) {
+            libro.devolver()
             prestamosActuales.remove(idLibro)
             ConsoleSystem.escritor("Libro devuelto con éxito.")
         } else {
@@ -55,7 +55,7 @@ open class RegistroPrestamos {
      * Retorna el historial de préstamos de un libro específico.
      * @param idLibro El ID del libro del cual se desea obtener el historial de préstamos.
      */
-    fun retornarHistorialPrestamos(idLibro: Int) {
+    override fun retornarHistorialPrestamos(idLibro: Int) {
         ConsoleSystem.escritor("Se ha prestado este libro a los siguientes usuarios: ${historialPrestamos[idLibro]}")
     }
 
@@ -63,7 +63,7 @@ open class RegistroPrestamos {
      * Retorna el historial de préstamos de un usuario específico.
      * @param idUsuario El ID del usuario del cual se desea obtener el historial de préstamos.
      */
-    fun retornarHistorialUsuario(idUsuario: Int) {
+    override fun retornarHistorialUsuario(idUsuario: Int) {
         val historialUsuario = mutableListOf<Int>()
 
         historialPrestamos.forEach { (idLibro, usuarios) ->

@@ -20,7 +20,7 @@ class Usuario(private val id: Int = generarIdentificadorUnico(), private val nom
      * @return El libro encontrado o null si no se encuentra.
      */
     private fun buscarLibro(): Libro? {
-        return listaLibrosPrestados.find { it.getId() == id }
+        return listaLibrosPrestados.find { it.obtenerId() == id }
     }
 
     /**
@@ -54,12 +54,12 @@ class Usuario(private val id: Int = generarIdentificadorUnico(), private val nom
      */
     fun consultarListaPrestamos(){
         listaLibrosPrestados.forEach{
-            ConsoleSystem.escritor("Id: ${it.getId()}.")
-            ConsoleSystem.escritor("Título: ${it.getTitulo()}.")
-            ConsoleSystem.escritor("Autor: ${it.getAutor()}.")
-            ConsoleSystem.escritor("Año publicación: ${it.getAnioPubli()}.")
-            ConsoleSystem.escritor("Temática: ${it.getTematica()}.")
-            ConsoleSystem.escritor("Estado: ${it.getEstado()}.")
+            ConsoleSystem.escritor("Id: ${it.obtenerId()}.")
+            ConsoleSystem.escritor("Título: ${it.obtenerTitulo()}.")
+            ConsoleSystem.escritor("Autor: ${it.obtenerAutor()}.")
+            ConsoleSystem.escritor("Año publicación: ${it.obtenerAnioPubli()}.")
+            ConsoleSystem.escritor("Temática: ${it.obtenerTematica()}.")
+            ConsoleSystem.escritor("Estado: ${it.obtenerEstado()}.")
             ConsoleSystem.escritor("________________")
         }
     }

@@ -62,7 +62,7 @@ object MenuUsuario {
 
         val nuevoLibro = Libro(id = id, titulo = titulo, autor = autor, anioPubli = anioPubli, tematica = tematica)
 
-        gestorBiblioteca.agregarLibro(nuevoLibro)
+        gestorBiblioteca.agregarElemento(nuevoLibro)
 
         ConsoleSystem.escritor("Libro añadido con éxito.")
     }
