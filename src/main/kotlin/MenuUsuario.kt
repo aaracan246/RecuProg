@@ -7,15 +7,10 @@ import org.example.UtilidadesBiblioteca.Companion.generarIdentificadorUnico
 object MenuUsuario {
 
     /**
-     * Gestor de biblioteca asociado al menú de usuario.
-     */
-    val gestorBiblioteca = GestorBiblioteca()
-
-    /**
      * Función que muestra el menú de usuario y gestiona las opciones seleccionadas por el usuario.
      * @param gestorBiblioteca El gestor de biblioteca utilizado para realizar operaciones de gestión de libros.
      */
-    fun userMenu(gestorBiblioteca: GestorBiblioteca) {
+    fun userMenu(usuario: Usuario, gestorBiblioteca: GestorBiblioteca, registroPrestamos: RegistroPrestamos) {
         do {
             userMenuMenu()
             val option = readln().toIntOrNull()
@@ -27,13 +22,21 @@ object MenuUsuario {
                 }
                 3 -> {
                     val libro = gestorBiblioteca.obtenerId()
-                    gestorBiblioteca.registrarPrestamo(libro)
+                    val catalogo = gestorBiblioteca.getCatalogo()
+                    registroPrestamos.registrarPrestamo(libro, usuario.getId(), catalogo)
                 }
                 4 -> {
                     val libro = gestorBiblioteca.obtenerId()
-                    gestorBiblioteca.devolverLibro(libro)
+                    val catalogo = gestorBiblioteca.getCatalogo()
+                    registroPrestamos.devolverLibro(libro, catalogo)
                 }
                 5 -> gestorBiblioteca.retornarLibrosPorEstado()
+
+                6 -> {val libro = gestorBiblioteca.obtenerId()
+                    registroPrestamos.retornarHistorialPrestamos(libro)}
+
+                7 -> {val user = usuario.getId()
+                    registroPrestamos.retornarHistorialUsuario(user)}
             }
         } while (option != null)
     }
@@ -57,7 +60,7 @@ object MenuUsuario {
         ConsoleSystem.escritor("Temática: ")
         val tematica = ConsoleSystem.lector()
 
-        val nuevoLibro = Libro(id = id, titulo = titulo, autor = autor, aniopubli = anioPubli, tematica = tematica)
+        val nuevoLibro = Libro(id = id, titulo = titulo, autor = autor, anioPubli = anioPubli, tematica = tematica)
 
         gestorBiblioteca.agregarLibro(nuevoLibro)
 

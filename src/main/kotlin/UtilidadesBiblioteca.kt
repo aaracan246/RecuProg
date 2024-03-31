@@ -3,7 +3,7 @@ package org.example
 class UtilidadesBiblioteca {
 
     companion object{
-        val setDeId = mutableSetOf<Int>()
+        private val setDeId = mutableSetOf<Int>()
 
         /** Función encargada de generar un identificador único.
          *

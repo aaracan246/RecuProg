@@ -2,35 +2,21 @@ package org.example
 
 import org.example.UtilidadesBiblioteca.Companion.generarIdentificadorUnico
 
-class GestorBiblioteca() {
+open class GestorBiblioteca(private val registroPrestamos: RegistroPrestamos) {
     /**
      * Lista mutable que almacena el catálogo de libros.
      */
-    val catalogo: MutableList<Libro> = mutableListOf()
+    private val catalogo: MutableList<Libro> = mutableListOf()
 
-    /**
-     * Mapa mutable que registra el estado de préstamo de cada libro por su ID.
-     */
-    val registroPrestamos: MutableMap<Int, Estado> = mutableMapOf()
 
     /**
      * Busca un libro en el catálogo por su instancia y devuelve el libro encontrado, si existe.
      * @param libro El libro a buscar en el catálogo.
      * @return El libro encontrado o null si no se encuentra.
      */
-    fun buscarLibro(libro: Libro): Libro? {
-        return catalogo.find { it.id == libro.id }
+    private fun buscarLibro(libro: Libro): Libro? {
+        return catalogo.find { it.getId() == libro.getId() }
     }
-
-//    /**
-//     * Busca un libro en el catálogo por su posición y devuelve el libro encontrado, si existe.
-//     * @param posLibro La posición del libro en el catálogo.
-//     * @return El libro encontrado o null si no se encuentra.
-//     */
-//    fun buscarLibro(posLibro: Int): Libro? {
-//        if (posLibro > catalogo.size) return null
-//        return catalogo[posLibro]
-//    }
 
     /**
      * Busca un libro en el catálogo por su ID y devuelve el libro encontrado, si existe.
@@ -38,7 +24,7 @@ class GestorBiblioteca() {
      * @return El libro encontrado o null si no se encuentra.
      */
     fun buscarLibro(id: Int): Libro? {
-        return catalogo.find { it.id == id }
+        return catalogo.find { it.getId() == id }
     }
 
     /**
@@ -47,10 +33,13 @@ class GestorBiblioteca() {
      */
     fun agregarLibro(libro: Libro) {
         val idUnico = generarIdentificadorUnico()
+
+        retornarTodosLibros()
+
         if (buscarLibro(libro) != null) {
             ConsoleSystem.escritor("Ese libro ya se encuentra en el catálogo.")
         } else {
-            libro.id = idUnico
+            libro.setId(idUnico)
             catalogo.add(libro)
         }
     }
@@ -60,7 +49,9 @@ class GestorBiblioteca() {
      * @param id El id del libro.
      */
     fun eliminarLibro(id: Int) {
-        val libroEncontrado = catalogo.find { it.id == id }
+        val libroEncontrado = catalogo.find { it.getId() == id }
+
+        retornarTodosLibros()
 
         if (libroEncontrado != null) {
             catalogo.remove(libroEncontrado)
@@ -70,47 +61,6 @@ class GestorBiblioteca() {
         }
     }
 
-    /**
-     * Registra el préstamo de un libro por su posición, si está disponible.
-     * @param posLibro La posición del libro en el catálogo.
-     */
-    fun registrarPrestamo(id: Int) {
-        val librito = buscarLibro(id)
-
-        when (id) {
-            null -> ConsoleSystem.escritor("Ese libro no se encuentra en el catálogo.")
-            else -> {
-                if (librito != null) {
-                    if (librito.estado == Estado.DISPONIBLE) {
-                        librito.estado = Estado.PRESTADO
-                        registroPrestamos[id] = Estado.PRESTADO
-                        ConsoleSystem.escritor("Libro prestado con éxito.")
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Registra la devolución de un libro por su posición, si está prestado.
-     * @param posLibro La posición del libro en el catálogo.
-     */
-    fun devolverLibro(id: Int) {
-        val librito = buscarLibro(id)
-
-        when (id) {
-            null -> ConsoleSystem.escritor("Ese libro no se encuentra en el catálogo.")
-            else -> {
-                if (librito != null) {
-                    if (librito.estado == Estado.PRESTADO) {
-                        librito.estado = Estado.DISPONIBLE
-                        registroPrestamos[id] = Estado.DISPONIBLE
-                        ConsoleSystem.escritor("Libro devuelto con éxito.")
-                    }
-                }
-            }
-        }
-    }
 
     /**
      * Muestra los libros del catálogo según la opción seleccionada por el usuario.
@@ -134,14 +84,14 @@ class GestorBiblioteca() {
     /**
      * Muestra todos los libros del catálogo.
      */
-    fun retornarTodosLibros() {
+    private fun retornarTodosLibros() {
         catalogo.forEach{
-            ConsoleSystem.escritor("ID: ${it.id}.")
-            ConsoleSystem.escritor("Título: ${it.titulo}.")
-            ConsoleSystem.escritor("Autor: ${it.autor}.")
-            ConsoleSystem.escritor("Año publicación: ${it.aniopubli}.")
-            ConsoleSystem.escritor("Temática: ${it.tematica}.")
-            ConsoleSystem.escritor("Estado: ${it.estado}.")
+            ConsoleSystem.escritor("ID: ${it.getId()}.")
+            ConsoleSystem.escritor("Título: ${it.getTitulo()}.")
+            ConsoleSystem.escritor("Autor: ${it.getAutor()}.")
+            ConsoleSystem.escritor("Año publicación: ${it.getAnioPubli()}.")
+            ConsoleSystem.escritor("Temática: ${it.getTematica()}.")
+            ConsoleSystem.escritor("Estado: ${it.getEstado()}.")
             ConsoleSystem.escritor("________________")
         }
     }
@@ -149,17 +99,17 @@ class GestorBiblioteca() {
     /**
      * Muestra los libros disponibles en el catálogo.
      */
-    fun retornarLibrosDisponibles() {
-        val librosDisponibles = catalogo.filter { it.estado == Estado.DISPONIBLE }
+    private fun retornarLibrosDisponibles() {
+        val librosDisponibles = catalogo.filter { it.getEstado() == Estado.DISPONIBLE }
 
         if (librosDisponibles.isNotEmpty()){
             librosDisponibles.forEach{
-                ConsoleSystem.escritor("ID: ${it.id}.")
-                ConsoleSystem.escritor("Título: ${it.titulo}.")
-                ConsoleSystem.escritor("Autor: ${it.autor}.")
-                ConsoleSystem.escritor("Año publicación: ${it.aniopubli}.")
-                ConsoleSystem.escritor("Temática: ${it.tematica}.")
-                ConsoleSystem.escritor("Estado: ${it.estado}.")
+                ConsoleSystem.escritor("ID: ${it.getId()}.")
+                ConsoleSystem.escritor("Título: ${it.getTitulo()}.")
+                ConsoleSystem.escritor("Autor: ${it.getAutor()}.")
+                ConsoleSystem.escritor("Año publicación: ${it.getAnioPubli()}.")
+                ConsoleSystem.escritor("Temática: ${it.getTematica()}.")
+                ConsoleSystem.escritor("Estado: ${it.getEstado()}.")
                 ConsoleSystem.escritor("________________")
             }
         }
@@ -168,17 +118,17 @@ class GestorBiblioteca() {
     /**
      * Muestra los libros prestados en el catálogo.
      */
-    fun retornarLibrosPrestados() {
-        val librosPrestados = catalogo.filter { it.estado == Estado.PRESTADO }
+    private fun retornarLibrosPrestados() {
+        val librosPrestados = catalogo.filter { it.getEstado() == Estado.PRESTADO }
 
         if (librosPrestados.isNotEmpty()){
             librosPrestados.forEach{
-                ConsoleSystem.escritor("ID: ${it.id}.")
-                ConsoleSystem.escritor("Título: ${it.titulo}.")
-                ConsoleSystem.escritor("Autor: ${it.autor}.")
-                ConsoleSystem.escritor("Año publicación: ${it.aniopubli}.")
-                ConsoleSystem.escritor("Temática: ${it.tematica}.")
-                ConsoleSystem.escritor("Estado: ${it.estado}.")
+                ConsoleSystem.escritor("ID: ${it.getId()}.")
+                ConsoleSystem.escritor("Título: ${it.getTitulo()}.")
+                ConsoleSystem.escritor("Autor: ${it.getAutor()}.")
+                ConsoleSystem.escritor("Año publicación: ${it.getAnioPubli()}.")
+                ConsoleSystem.escritor("Temática: ${it.getTematica()}.")
+                ConsoleSystem.escritor("Estado: ${it.getEstado()}.")
                 ConsoleSystem.escritor("________________")
             }
         }
@@ -192,5 +142,27 @@ class GestorBiblioteca() {
         ConsoleSystem.escritor("Por favor, introduzca el ID del libro.")
         val idLibro = ConsoleSystem.lector().toInt()
         return idLibro
+    }
+
+    fun getCatalogo(): MutableList<Libro>{
+        return catalogo
+    }
+
+    // Funciones que vienen de RegistroPrestamos:
+
+    fun registrarPrestamo(idLibro: Int, idUsuario: Int){
+        registroPrestamos.registrarPrestamo(idLibro, idUsuario, catalogo)
+    }
+
+    fun devolverLibro(idLibro: Int){
+        registroPrestamos.devolverLibro(idLibro, catalogo)
+    }
+
+    fun retornarHistorialPrestamos(idLibro: Int){
+        registroPrestamos.retornarHistorialPrestamos(idLibro)
+    }
+
+    fun retornarHistorialUsuario(idUsuario: Int){
+        registroPrestamos.retornarHistorialUsuario(idUsuario)
     }
 }
